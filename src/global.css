@@ -6,4 +6,71 @@
 @tailwind components;
 @tailwind utilities;
 
+@layer base {
+  :root {
+    font-family: "Open Sans", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 350;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
+    width: 100dvw;
+    height: 100dvh;
+  }
+  .primary-btn {
+    @apply text-primary-font;
+    @apply bg-sage-green;
+    @apply rounded-2xl;
+    @apply px-4 py-1;
+    text-transform: uppercase;
+    border: 3px solid #ccd5ae;
+    display: flex;
+    font-weight: bold;
+    text-align: center;
+    align-items: center;
+  }
 
+  .primary-btn:hover {
+    @apply bg-primary-font;
+    @apply text-sage-green;
+    border: 3px solid #ccd5ae;
+    transition: 0.2s;
+    transform: scale(1.07);
+  }
+
+  .bubble {
+    text-transform: uppercase;
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    display: inline-block;
+    @apply p-2;
+    position: relative;
+  }
+
+  .bubble::after {
+    background: none repeat scroll 0 0 transparent;
+    bottom: 0;
+    content: "";
+    display: block;
+    height: 3px;
+    left: 50%;
+    position: absolute;
+    background: rgba(231, 240, 220, 0.5);
+    transition:
+      width 0.3s ease 0s,
+      left 0.3s ease 0s;
+    width: 0;
+    @apply rounded-md;
+  }
+
+  .bubble:hover::after {
+    width: 100%;
+    left: 0;
+  }
+
+  h1 {
+    @apply text-3xl;
+  }
+  h2 {
+    @apply text-xl;
+  }
+}

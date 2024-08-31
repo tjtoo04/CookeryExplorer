@@ -1,8 +1,17 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-  content: ['./src/**/*.{js,ts,jsx,tsx,mdx}'],
+  content: [
+    "./src/**/*.{js,ts,jsx,tsx,mdx}",
+    "./node_modules/flowbite/**/*.js",
+  ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        "sage-green": "#597445",
+        "sage-shadow": "#658147",
+        "primary-font": "#ccd5ae",
+      },
+    },
   },
-  plugins: [],
+  plugins: [require("flowbite/plugin")],
 };
