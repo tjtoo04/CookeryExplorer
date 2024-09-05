@@ -11,6 +11,7 @@ import { isDev } from "@builder.io/qwik/build";
 import { initFlowbite } from "flowbite";
 
 import "./global.css";
+import { GuestNavbar } from "./components/globals/GuestNavbar";
 
 export default component$(() => {
   /**
@@ -19,7 +20,20 @@ export default component$(() => {
    *
    * Don't remove the `<head>` and `<body>` elements.
    */
-
+  const links = [
+    {
+      title: "Home",
+      link: "/",
+    },
+    {
+      title: "About",
+      link: "/about",
+    },
+    {
+      title: "Demo",
+      link: "/",
+    },
+  ];
   return (
     <QwikCityProvider>
       <head>
@@ -35,6 +49,7 @@ export default component$(() => {
       <body lang="en">
         <RouterOutlet />
         {!isDev && <ServiceWorkerRegister />}
+        <GuestNavbar links={links}/>
       </body>
     </QwikCityProvider>
   );
