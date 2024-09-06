@@ -1,3 +1,5 @@
+import { FlowbiteProvider } from "flowbite-qwik";
+import 'dotenv/config'
 import { component$ } from "@builder.io/qwik";
 import {
   QwikCityProvider,
@@ -11,7 +13,6 @@ import { isDev } from "@builder.io/qwik/build";
 import { initFlowbite } from "flowbite";
 
 import "./global.css";
-import { GuestNavbar } from "./components/globals/GuestNavbar";
 
 export default component$(() => {
   /**
@@ -20,23 +21,29 @@ export default component$(() => {
    *
    * Don't remove the `<head>` and `<body>` elements.
    */
-  const links = [
-    {
-      title: "Home",
-      link: "/",
-    },
-    {
-      title: "About",
-      link: "/about",
-    },
-    {
-      title: "Demo",
-      link: "/",
-    },
-  ];
   return (
     <QwikCityProvider>
       <head>
+        <link rel="preconnect" href="https://fonts.googleapis.com"></link>
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        ></link>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+          rel="stylesheet"
+        ></link>
+        <link rel="preconnect" href="https://fonts.googleapis.com"></link>
+        <link
+          rel="preconnect"
+          href="https://fonts.gstatic.com"
+          crossOrigin=""
+        ></link>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Exo+2:ital,wght@0,100..900;1,100..900&display=swap"
+          rel="stylesheet"
+        ></link>
         <meta charset="utf-8" />
         {!isDev && (
           <link
@@ -47,9 +54,10 @@ export default component$(() => {
         <RouterHead />
       </head>
       <body lang="en">
-        <RouterOutlet />
+        <FlowbiteProvider theme="green" toastPosition="bottom-right">
+          <RouterOutlet />
+        </FlowbiteProvider>
         {!isDev && <ServiceWorkerRegister />}
-        <GuestNavbar links={links}/>
       </body>
     </QwikCityProvider>
   );
