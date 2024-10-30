@@ -12,8 +12,8 @@ const getRecipe = async (query: string) => {
     `https://api.edamam.com/api/recipes/v2?type=public&?app_id=${appID}app_key=${appKey}&q=${query}`,
   );
 
-    return recipeData.json();
-}
+  return recipeData.json();
+};
 
 export default component$(() => {
   const links = [
@@ -37,17 +37,16 @@ export default component$(() => {
     <>
       <GuestNavbar links={links} />
       <header class="flex h-screen items-center justify-center bg-[url('/src/images/jason-briscoe-7MAjXGUmaPw-unsplash.jpg')] bg-cover">
-        <div class="bg-light-green/50 flex h-screen w-screen flex-col items-center justify-center rounded-md p-4">
+        <div class="flex h-screen w-screen flex-col items-center justify-center rounded-md bg-light-green/50 p-4">
           <h1 class="xs:text-6xl p-4 sm:text-7xl md:text-8xl lg:text-9xl">
             Look for any recipe
           </h1>
           <Form
             onSubmit$={() => {
               const data = getRecipe(val.value);
-              data.then(val=> {
+              data.then((val) => {
                 console.log(val);
-                
-              })
+              });
             }}
             class="flex w-full justify-center"
           >

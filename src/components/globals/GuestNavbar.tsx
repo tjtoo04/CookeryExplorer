@@ -1,6 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import { Link, useNavigate } from "@builder.io/qwik-city";
-import Logo from "../svg/Logo"
+import Logo from "../svg/Logo";
 
 interface GuestNavbarProps {
   links: {
@@ -14,9 +14,9 @@ export const GuestNavbar = component$<GuestNavbarProps>((props) => {
   return (
     <>
       <div class="flex items-center justify-center">
-        <div class="z-[100] fixed top-0 my-4 flex w-[97dvw] items-center justify-around rounded-md bg-sage-green p-4 text-primary-font shadow-md shadow-gray-400">
+        <div class="fixed top-0 z-[100] my-4 flex w-[97dvw] items-center justify-around rounded-md bg-sage-green p-4 text-primary-font shadow-md shadow-gray-400">
           <div class="flex w-[20dvw] justify-center">
-           <Logo />
+            <Logo />
           </div>
           <div class="flex w-3/5 justify-evenly ">
             {props.links.map((item, id) => {
@@ -38,7 +38,11 @@ export const GuestNavbar = component$<GuestNavbarProps>((props) => {
             >
               Login
             </button>
-            <button type="button" class="primary-btn">
+            <button
+              type="button"
+              class="primary-btn"
+              onClick$={() => nav("/register")}
+            >
               Register
             </button>
           </div>
