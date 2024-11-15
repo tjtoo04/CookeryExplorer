@@ -1,62 +1,39 @@
 import { component$ } from "@builder.io/qwik";
-import Image from "../../images/cdc-65_nbwiD3I4-unsplash.jpg?jsx";
-import type { DocumentHead, JSONObject } from "@builder.io/qwik-city";
+import type { DocumentHead } from "@builder.io/qwik-city";
 import {
-  Form,
   routeAction$,
-  useLocation,
+  zod$,
+  z,
+  Form,
   useNavigate,
 } from "@builder.io/qwik-city";
-import { Input } from "flowbite-qwik";
-import { Button } from "flowbite-qwik";
+import { PrismaClient } from "@prisma/client";
+import { Button, Input } from "flowbite-qwik";
 import BackArrow from "~/components/svg/BackArrow";
 import Logo from "../../images/cookeryexplorer-favicon-black.webp?jsx";
-import { genSaltSync, hashSync } from "bcrypt-ts";
-import { createClient } from "@supabase/supabase-js";
+import Image from "../../images/cdc-65_nbwiD3I4-unsplash.jpg?jsx";
+import GithubLogo from "../../images/github-mark.png?jsx";
+import GoogleLogo from "~/components/svg/GoogleLogo";
+import { useSignIn } from "../plugin@auth";
 
-const checkMatching = (postData: JSONObject) => {
-  const password = postData.password as string;
-  const confirmed_password = postData.confirmed_password as string;
-
-  if (password !== confirmed_password) {
-    return false;
-  } else {
-    return password;
-  }
-};
-
-export const useRegisterUser = routeAction$(async (postData) => {
-  const supabaseURL = import.meta.env.VITE_SUPABASE_URL;
-  const supabaseKEY = import.meta.env.VITE_SUPABASE_ANON_KEY;
-  const email = postData.email as string;
-  const password = checkMatching(postData);
-  if (password) {
-    const salt = genSaltSync(10);
-    const hashed = hashSync(password, salt);
-
-    const supabaseClient = createClient(supabaseURL!, supabaseKEY!);
-
-    const { data, error } = await supabaseClient.auth.signUp({
-      email: email,
-      password: hashed,
-    });
-
-    return {
-      success: error === null && true,
+export const useCreateUser = routeAction$(
+  async (data) => {
+    const prisma = new PrismaClient();
+    const user = await prisma.user.create({
       data,
-      error,
-    };
-  } else {
-    return {
-      message: "Passwords do not match",
-    };
-  }
-});
+    });
+    return user;
+  },
+  zod$({
+    name: z.string(),
+    email: z.string().email(),
+  }),
+);
 
 export default component$(() => {
-  const registerUser = useRegisterUser();
+  const createUserAction = useCreateUser();
+  const signInSig = useSignIn();
   const nav = useNavigate();
-  const loc = useLocation();
   return (
     <>
       <div class="flex h-screen w-full">
@@ -65,9 +42,7 @@ export default component$(() => {
             <div class="flex p-8">
               <div
                 class="flex h-4 w-[10%] transform items-center justify-center transition duration-500 hover:scale-105 hover:cursor-pointer"
-                onClick$={() =>
-                  loc.prevUrl ? window.history.back() : nav("/")
-                }
+                onClick$={() => nav("/")}
               >
                 <BackArrow />
               </div>
@@ -75,13 +50,10 @@ export default component$(() => {
                 <Logo class="w-[50px]" />
               </div>
             </div>
-            <div class="flex h-full w-full flex-col items-center justify-center">
+            <div class="flex h-full w-full flex-col items-center justify-center gap-8">
               <Form
-                onSubmitCompleted$={() =>
-                  registerUser.value?.success && nav("/")
-                }
-                action={registerUser}
-                class="flex h-full w-full flex-col items-center justify-evenly"
+                action={createUserAction}
+                class="flex w-full flex-col items-center gap-8"
               >
                 <span class="text-5xl font-bold tracking-wide">Register</span>
                 <Input
@@ -115,14 +87,38 @@ export default component$(() => {
                 >
                   Register
                 </Button>
-                {registerUser.value?.message && (
-                  <p>{registerUser.value.message}</p>
-                )}
-                {registerUser.value?.error && (
-                  <>
-                    <p>{registerUser.value.error.message}</p>
-                  </>
-                )}
+              </Form>
+              <Form
+                action={signInSig}
+                class="flex w-full items-center justify-evenly"
+              >
+                <input type="hidden" name="options.redirectTo" value="/" />
+                <Button
+                  class="flex w-fit items-center border-sage-green text-sage-green hover:bg-sage-green"
+                  size="md"
+                  pill
+                  outline
+                  value={"github"}
+                  name="providerId"
+                >
+                  <div class="flex w-full items-center">
+                    <GithubLogo class="h-[1.5rem] w-[1.5rem]" />
+                    <span class="px-2">Sign In With Github</span>
+                  </div>
+                </Button>
+                <Button
+                  class="w-fit border-sage-green text-sage-green hover:bg-sage-green"
+                  size="md"
+                  pill
+                  outline
+                  value={"google"}
+                  name="providerId"
+                >
+                  <div class="flex w-full items-center">
+                    <GoogleLogo />
+                    <span class="px-2">Sign In With Google</span>
+                  </div>
+                </Button>
               </Form>
             </div>
           </div>
@@ -136,11 +132,11 @@ export default component$(() => {
 });
 
 export const head: DocumentHead = {
-  title: "Login",
+  title: "Register",
   meta: [
     {
       name: "description",
-      content: "CookeryExplorer site login",
+      content: "CookeryExplorer site register",
     },
   ],
 };

@@ -2,7 +2,6 @@ import { component$, useSignal } from "@builder.io/qwik";
 import { Form, type DocumentHead } from "@builder.io/qwik-city";
 import { Input } from "flowbite-qwik";
 import { Button } from "flowbite-qwik";
-import { GuestNavbar } from "~/components/globals/GuestNavbar";
 import SearchIcon from "~/components/svg/SearchIcon";
 
 const getRecipe = async (query: string) => {
@@ -16,26 +15,10 @@ const getRecipe = async (query: string) => {
 };
 
 export default component$(() => {
-  const links = [
-    {
-      title: "Home",
-      link: "/",
-    },
-    {
-      title: "About",
-      link: "/about",
-    },
-    {
-      title: "Demo",
-      link: "/",
-    },
-  ];
-
   const val = useSignal("");
 
   return (
     <>
-      <GuestNavbar links={links} />
       <header class="flex h-screen items-center justify-center bg-[url('/src/images/jason-briscoe-7MAjXGUmaPw-unsplash.jpg')] bg-cover">
         <div class="flex h-screen w-screen flex-col items-center justify-center rounded-md bg-light-green/50 p-4">
           <h1 class="xs:text-6xl p-4 sm:text-7xl md:text-8xl lg:text-9xl">
