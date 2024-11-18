@@ -18,8 +18,10 @@ export const GuestNavbar = component$<GuestNavbarProps>((props) => {
 
   return (
     <>
-      <div class={`transition-all ease-in-out duration-700  items-center justify-center flex ${props.dynamicDisplay.value}`}>
-        <div class="fixed top-0 z-[100] my-4 flex w-[97dvw] items-center justify-around rounded-md bg-sage-green p-4 text-primary-font shadow-md shadow-gray-400">
+      <div
+        class={`flex items-center justify-center transition-all duration-700 ease-in-out ${props.dynamicDisplay.value} fixed left-[50%]`}
+      >
+        <div class="fixed top-0 z-[999] my-4 flex w-[97dvw] items-center justify-around rounded-md bg-sage-green p-4 text-primary-font shadow-md shadow-gray-400">
           <div class="flex w-[20dvw] justify-center">
             <Logo />
           </div>

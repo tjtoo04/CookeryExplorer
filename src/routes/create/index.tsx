@@ -38,7 +38,7 @@ export default component$(() => {
     <>
       <div class="flex h-screen w-full">
         <div class="flex w-1/2 flex-col items-center justify-center bg-sage-green">
-          <div class="flex h-5/6 w-3/5 flex-col rounded-md bg-light-green">
+          <div class="flex h-fit w-3/5 flex-col rounded-md bg-light-green py-[2rem] sm:py-[3rem] md:py-[4rem]">
             <div class="flex p-8">
               <div
                 class="flex h-4 w-[10%] transform items-center justify-center transition duration-500 hover:scale-105 hover:cursor-pointer"
@@ -88,38 +88,40 @@ export default component$(() => {
                   Register
                 </Button>
               </Form>
-              <Form
-                action={signInSig}
-                class="flex w-full items-center justify-evenly"
-              >
-                <input type="hidden" name="options.redirectTo" value="/" />
-                <Button
-                  class="flex w-fit items-center border-sage-green text-sage-green hover:bg-sage-green"
-                  size="md"
-                  pill
-                  outline
-                  value={"github"}
-                  name="providerId"
+              <div class="flex h-full w-full items-center justify-center">
+                <Form
+                  action={signInSig}
+                  class="flex w-full items-center justify-evenly"
                 >
-                  <div class="flex w-full items-center">
-                    <GithubLogo class="h-[1.5rem] w-[1.5rem]" />
-                    <span class="px-2">Sign In With Github</span>
-                  </div>
-                </Button>
-                <Button
-                  class="w-fit border-sage-green text-sage-green hover:bg-sage-green"
-                  size="md"
-                  pill
-                  outline
-                  value={"google"}
-                  name="providerId"
-                >
-                  <div class="flex w-full items-center">
-                    <GoogleLogo />
-                    <span class="px-2">Sign In With Google</span>
-                  </div>
-                </Button>
-              </Form>
+                  <input type="hidden" name="options.redirectTo" value="/" />
+                  <Button
+                    class="flex w-[35%] items-center border-sage-green text-sage-green hover:bg-sage-green"
+                    size="md"
+                    pill
+                    outline
+                    value={"github"}
+                    name="providerId"
+                  >
+                    <div class="flex w-full items-center">
+                      <GithubLogo class="h-[1.5rem] w-[1.5rem]" />
+                      <span class="px-2">Sign In With Github</span>
+                    </div>
+                  </Button>
+                  <Button
+                    class="w-[35%] border-sage-green text-sage-green hover:bg-sage-green"
+                    size="md"
+                    pill
+                    outline
+                    value={"google"}
+                    name="providerId"
+                  >
+                    <div class="flex w-full items-center">
+                      <GoogleLogo />
+                      <span class="px-2">Sign In With Google</span>
+                    </div>
+                  </Button>
+                </Form>
+              </div>
             </div>
           </div>
         </div>

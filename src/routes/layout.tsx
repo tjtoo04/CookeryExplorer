@@ -1,4 +1,13 @@
-import { $, component$, Slot, useOnDocument, useSignal, useStore, useTask$} from "@builder.io/qwik";
+import {
+  $,
+  component$,
+  Slot,
+  useOnDocument,
+  useOnWindow,
+  useSignal,
+  useStore,
+  useTask$,
+} from "@builder.io/qwik";
 import { useLocation, type RequestHandler } from "@builder.io/qwik-city";
 import { GuestNavbar } from "~/components/globals/GuestNavbar";
 import { AuthNavbar } from "~/components/globals/AuthNavbar";
@@ -30,25 +39,22 @@ const links = [
   },
 ];
 
-
-
 export default component$(() => {
-  const dynamicDisplay = useSignal<string>('flex');
+  const dynamicDisplay = useSignal<string>("flex");
   const location = useLocation();
   const userSession = useSession();
 
   useOnDocument(
-    'wheel',
+    "wheel",
     $((event) => {
       if (event.deltaY < 0) {
-        dynamicDisplay.value = 'opacity-100 '
+        dynamicDisplay.value = "opacity-100 ";
       } else {
-        dynamicDisplay.value = 'opacity-0 -translate-y-40'
+        dynamicDisplay.value = "opacity-0 -translate-y-40";
       }
-    })
+    }),
   );
 
-  
   return (
     <>
       {console.log("user", userSession.value)}
