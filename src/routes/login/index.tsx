@@ -35,7 +35,7 @@ export default component$(() => {
               </div>
             </div>
             <div class="flex h-full  w-full flex-col items-center justify-center gap-8">
-              <Form class="flex w-full flex-col items-center gap-8">
+              <Form class="flex w-full flex-col items-center gap-8" action={signInSig}>
                 <span class="text-5xl font-bold tracking-wide">Login</span>
                 <Input
                   class="w-4/5"
@@ -48,6 +48,7 @@ export default component$(() => {
                   label="Password"
                   placeholder="Password"
                   required
+                  type="password"
                 />
                 <Button
                   class="w-4/5 border-sage-green text-sage-green hover:bg-sage-green"

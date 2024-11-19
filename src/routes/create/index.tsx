@@ -3,7 +3,6 @@ import type { DocumentHead } from "@builder.io/qwik-city";
 import {
   routeAction$,
   zod$,
-  z,
   Form,
   useNavigate,
 } from "@builder.io/qwik-city";
@@ -15,18 +14,48 @@ import Image from "../../images/cdc-65_nbwiD3I4-unsplash.jpg?jsx";
 import GithubLogo from "../../images/github-mark.png?jsx";
 import GoogleLogo from "~/components/svg/GoogleLogo";
 import { useSignIn } from "../plugin@auth";
+import AuthController from "~/controllers/AuthController";
 
 export const useCreateUser = routeAction$(
   async (data) => {
     const prisma = new PrismaClient();
+    const hashedPassword = await AuthController.hashPassword(data.password);
+    const updatedData = {
+      ...data,
+      password: hashedPassword
+    }
+    Reflect.deleteProperty(updatedData, 'confirmed_password')
     const user = await prisma.user.create({
-      data,
+      data: {
+        ...updatedData
+      },
     });
     return user;
   },
-  zod$({
-    name: z.string(),
-    email: z.string().email(),
+  zod$((z) => {
+    return z
+      .object({
+        email: z
+          .string({ required_error: "Email is required" })
+          .email("Invalid email"),
+        password: z
+          .string({ required_error: "Password is required" })
+          .min(1, "Password is required")
+          .min(8, "Password must be more than 8 characters"),
+        confirmed_password: z
+          .string({ required_error: "Password is required" })
+          .min(1, "Password is required")
+          .min(8, "Password must be more than 8 characters"),
+      })
+      .superRefine(({ confirmed_password, password }, ctx) => {
+        if (confirmed_password !== password) {
+          ctx.addIssue({
+            code: "custom",
+            message: "The passwords did not match",
+            path: ["confirmed_password"],
+          });
+        }
+      });
   }),
 );
 
@@ -57,19 +86,25 @@ export default component$(() => {
               >
                 <span class="text-5xl font-bold tracking-wide">Register</span>
                 <Input
+                  value={createUserAction.formData?.get('email')}
                   name="email"
                   class="w-4/5"
                   label="Email"
                   placeholder="Email"
                   required
+                  validationStatus={createUserAction.value?.fieldErrors?.email ? "error" : undefined }
+                  validationMessage={createUserAction.value?.failed && <small>{createUserAction.value.fieldErrors.email}</small>}
                 />
                 <Input
+                  value={createUserAction.formData?.get('password')}
                   name="password"
                   class="w-4/5"
                   label="Password"
                   placeholder="Password"
                   type="password"
                   required
+                  validationStatus={createUserAction.value?.fieldErrors?.password ? "error" : undefined }
+                  validationMessage={createUserAction.value?.failed && <small>{createUserAction.value.fieldErrors.password}</small>}
                 />
                 <Input
                   name="confirmed_password"
@@ -78,6 +113,9 @@ export default component$(() => {
                   placeholder="Confirm Password"
                   type="password"
                   required
+                  validationStatus={createUserAction.value?.fieldErrors?.confirmed_password ? "error" : undefined }
+                  validationMessage={createUserAction.value?.failed && <small>{createUserAction.value.fieldErrors.confirmed_password}</small>}
+
                 />
                 <Button
                   class="w-4/5 border-sage-green text-sage-green hover:bg-sage-green"
