@@ -39,17 +39,17 @@ export const GuestNavbar = component$<GuestNavbarProps>((props) => {
           </div>
           <div class="flex w-[20dvw] justify-evenly">
             <button
-              onClick$={() => {
-                nav("/login");
-              }}
+              onClick$={() => signInSig.submit({ redirectTo: "/" })}
               type="button"
               class="primary-btn"
             >
               Login
             </button>
             <Link
+              onClick$={() => {
+                nav("/create");
+              }}
               class="primary-btn"
-              onClick$={() => signInSig.submit({ redirectTo: "/" })}
             >
               Register
             </Link>

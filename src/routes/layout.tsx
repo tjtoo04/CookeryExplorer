@@ -3,10 +3,7 @@ import {
   component$,
   Slot,
   useOnDocument,
-  useOnWindow,
   useSignal,
-  useStore,
-  useTask$,
 } from "@builder.io/qwik";
 import { useLocation, type RequestHandler } from "@builder.io/qwik-city";
 import { GuestNavbar } from "~/components/globals/GuestNavbar";
@@ -57,7 +54,7 @@ export default component$(() => {
 
   return (
     <>
-      {console.log("user", userSession.value)}
+      {console.log("user", userSession)}
       {location.url.pathname !== "/create/" &&
         location.url.pathname !== "/login/" &&
         (!userSession.value?.user ? (

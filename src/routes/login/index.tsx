@@ -35,18 +35,26 @@ export default component$(() => {
               </div>
             </div>
             <div class="flex h-full  w-full flex-col items-center justify-center gap-8">
-              <Form class="flex w-full flex-col items-center gap-8" action={signInSig}>
+              <Form
+                class="flex w-full flex-col items-center gap-8"
+                action={signInSig}
+              >
                 <span class="text-5xl font-bold tracking-wide">Login</span>
+                <input type="hidden" name="options.redirectTo" value="/" />
+                <input type="hidden" name="providerId" value={"credentials"} />
                 <Input
                   class="w-4/5"
                   label="Email"
                   placeholder="Email"
+                  name="options.email"
                   required
+                  type="email"
                 />
                 <Input
                   class="w-4/5"
                   label="Password"
                   placeholder="Password"
+                  name="options.password"
                   required
                   type="password"
                 />

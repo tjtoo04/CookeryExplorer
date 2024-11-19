@@ -1,11 +1,6 @@
 import { component$ } from "@builder.io/qwik";
 import type { DocumentHead } from "@builder.io/qwik-city";
-import {
-  routeAction$,
-  zod$,
-  Form,
-  useNavigate,
-} from "@builder.io/qwik-city";
+import { routeAction$, zod$, Form, useNavigate } from "@builder.io/qwik-city";
 import { PrismaClient } from "@prisma/client";
 import { Button, Input } from "flowbite-qwik";
 import BackArrow from "~/components/svg/BackArrow";
@@ -18,18 +13,41 @@ import AuthController from "~/controllers/AuthController";
 
 export const useCreateUser = routeAction$(
   async (data) => {
+    const expiry = new Date();
+    expiry.setDate(expiry.getDate() + 5);
     const prisma = new PrismaClient();
     const hashedPassword = await AuthController.hashPassword(data.password);
     const updatedData = {
       ...data,
-      password: hashedPassword
-    }
-    Reflect.deleteProperty(updatedData, 'confirmed_password')
+      password: hashedPassword,
+    };
+    Reflect.deleteProperty(updatedData, "confirmed_password");
     const user = await prisma.user.create({
       data: {
-        ...updatedData
+        ...updatedData,
+        accounts: {
+          create: [
+            {
+              provider: "credentials",
+              providerAccountId: "0000000000",
+              type: "cred",
+              token_type: "bearer",
+            },
+          ],
+        },
+        sessions: {
+          create: [
+            {
+              expires: expiry,
+              sessionToken:
+                Math.random().toString(36).substring(2) +
+                Math.random().toString(36).substring(2),
+            },
+          ],
+        },
       },
     });
+
     return user;
   },
   zod$((z) => {
@@ -86,25 +104,43 @@ export default component$(() => {
               >
                 <span class="text-5xl font-bold tracking-wide">Register</span>
                 <Input
-                  value={createUserAction.formData?.get('email')}
+                  value={createUserAction.formData?.get("email")}
                   name="email"
                   class="w-4/5"
                   label="Email"
                   placeholder="Email"
                   required
-                  validationStatus={createUserAction.value?.fieldErrors?.email ? "error" : undefined }
-                  validationMessage={createUserAction.value?.failed && <small>{createUserAction.value.fieldErrors.email}</small>}
+                  validationStatus={
+                    createUserAction.value?.fieldErrors?.email
+                      ? "error"
+                      : undefined
+                  }
+                  validationMessage={
+                    createUserAction.value?.failed && (
+                      <small>{createUserAction.value.fieldErrors.email}</small>
+                    )
+                  }
                 />
                 <Input
-                  value={createUserAction.formData?.get('password')}
+                  value={createUserAction.formData?.get("password")}
                   name="password"
                   class="w-4/5"
                   label="Password"
                   placeholder="Password"
                   type="password"
                   required
-                  validationStatus={createUserAction.value?.fieldErrors?.password ? "error" : undefined }
-                  validationMessage={createUserAction.value?.failed && <small>{createUserAction.value.fieldErrors.password}</small>}
+                  validationStatus={
+                    createUserAction.value?.fieldErrors?.password
+                      ? "error"
+                      : undefined
+                  }
+                  validationMessage={
+                    createUserAction.value?.failed && (
+                      <small>
+                        {createUserAction.value.fieldErrors.password}
+                      </small>
+                    )
+                  }
                 />
                 <Input
                   name="confirmed_password"
@@ -113,9 +149,18 @@ export default component$(() => {
                   placeholder="Confirm Password"
                   type="password"
                   required
-                  validationStatus={createUserAction.value?.fieldErrors?.confirmed_password ? "error" : undefined }
-                  validationMessage={createUserAction.value?.failed && <small>{createUserAction.value.fieldErrors.confirmed_password}</small>}
-
+                  validationStatus={
+                    createUserAction.value?.fieldErrors?.confirmed_password
+                      ? "error"
+                      : undefined
+                  }
+                  validationMessage={
+                    createUserAction.value?.failed && (
+                      <small>
+                        {createUserAction.value.fieldErrors.confirmed_password}
+                      </small>
+                    )
+                  }
                 />
                 <Button
                   class="w-4/5 border-sage-green text-sage-green hover:bg-sage-green"
