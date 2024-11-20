@@ -57,7 +57,7 @@ export default component$(() => {
         )}
         <RouterHead />
       </head>
-      <body id="mainBody" lang="en">
+      <body lang="en">
         <FlowbiteProvider theme="green" toastPosition="bottom-right">
           <RouterOutlet />
         </FlowbiteProvider>

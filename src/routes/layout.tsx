@@ -60,7 +60,7 @@ export default component$(() => {
         (!userSession.value?.user ? (
           <GuestNavbar dynamicDisplay={dynamicDisplay} links={links} />
         ) : (
-          <AuthNavbar links={links} />
+          <AuthNavbar dynamicDisplay={dynamicDisplay} links={links} />
         ))}
       <Slot />;
     </>

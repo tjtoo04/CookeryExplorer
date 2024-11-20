@@ -12,6 +12,7 @@ const AuthController = {
     const prisma = new PrismaClient();
     const user = await prisma.user.findUnique({where: {email: email}});
     const verifiedPassword = user && await compare(password, user.password as string)
+    
     return verifiedPassword ? { status: true, userData: user } : { status: false, userData: {}};
   },
 };

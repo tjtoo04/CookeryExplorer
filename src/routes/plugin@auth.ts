@@ -35,6 +35,13 @@ export const { onRequest, useSession, useSignIn, useSignOut } = QwikAuth$(
         session.user.id = user.id;
         return session;
       },
+      jwt({ token, user }) {
+        if (user) {
+          // User is available during sign-in
+          token.id = user.id;
+        }
+        return token;
+      },
     },
     pages: {
       signIn: "/login",

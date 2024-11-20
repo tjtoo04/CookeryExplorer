@@ -1,3 +1,4 @@
+import type { Signal } from "@builder.io/qwik";
 import { component$ } from "@builder.io/qwik";
 import { Link, useNavigate } from "@builder.io/qwik-city";
 import Logo from "../svg/Logo";
@@ -8,6 +9,7 @@ interface AuthNavbarProps {
     title: string;
     link: string;
   }[];
+  dynamicDisplay: Signal;
 }
 
 export const AuthNavbar = component$<AuthNavbarProps>((props) => {
@@ -17,7 +19,9 @@ export const AuthNavbar = component$<AuthNavbarProps>((props) => {
 
   return (
     <>
-      <div class="flex items-center justify-center">
+      <div
+        class={`flex items-center justify-center transition-all duration-700 ease-in-out ${props.dynamicDisplay.value} fixed left-[50%]`}
+      >
         <div class="fixed top-0 z-[100] my-4 flex w-[97dvw] items-center justify-around rounded-md bg-sage-green p-4 text-primary-font shadow-md shadow-gray-400">
           <div class="flex w-[20dvw] justify-center">
             <Logo />

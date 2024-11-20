@@ -32,7 +32,7 @@
   .primary-btn:hover {
     @apply bg-primary-font;
     @apply text-sage-green;
-    border: 1px solid #ccd5ae;
+    border: 2px solid #ccd5ae;
     transition: 0.2s;
     transform: scale(1.07);
   }
