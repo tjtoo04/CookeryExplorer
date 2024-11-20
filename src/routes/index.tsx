@@ -1,8 +1,9 @@
 import { component$, useSignal } from "@builder.io/qwik";
 import { Form, type DocumentHead } from "@builder.io/qwik-city";
+import type { ButtonVariant} from "flowbite-qwik";
 import { Input } from "flowbite-qwik";
 import { Button } from "flowbite-qwik";
-import SearchIcon from "~/components/svg/SearchIcon";
+import { IconSearchOutline } from "flowbite-qwik-icons";
 
 const getRecipe = async (query: string) => {
   const appID = import.meta.env.EDAMAM_APP_ID;
@@ -39,9 +40,9 @@ export default component$(() => {
               placeholder="Search for a recipe here"
               size="lg"
               class="z-0 mt-36 w-4/5 border-sage-green focus:border"
-              prefix={<SearchIcon />}
+              prefix={ <IconSearchOutline/> }
               suffix={
-                <Button type="submit" class="bg-sage-green">
+                <Button pill size="sm" type="submit" color={"sage-green" as ButtonVariant} class="primary-btn">
                   Search
                 </Button>
               }
