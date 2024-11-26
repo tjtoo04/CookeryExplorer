@@ -22,19 +22,7 @@ export default component$(() => {
   const isTyping = useSignal(false);
   const isLoading = useSignal(false);
   const showResults = useSignal("opacity-0 -translate-y-6");
-
-  useTask$(({ track }) => {
-    const typingStatus = track(isTyping);
-    const update = () => {
-      if (typingStatus) {
-        const timeoutId = setTimeout(() => {
-          isTyping.value = false;
-        }, 700);
-        return () => clearTimeout(timeoutId);
-      }
-    };
-    update();
-  });
+  const timeoutId = useSignal<object>();
 
   useTask$(({ track }) => {
     const value = track(val);
@@ -82,7 +70,13 @@ export default component$(() => {
               <Input
                 name="query"
                 bind:value={val}
-                onKeyPress$={() => (isTyping.value = true)}
+                onKeyPress$={() => {
+                  clearTimeout(timeoutId.value as NodeJS.Timeout);
+                  isTyping.value = true;
+                  timeoutId.value = setTimeout(() => {
+                    isTyping.value = false;
+                  }, 1000);
+                }}
                 placeholder="Search for a recipe here"
                 size="lg"
                 class="z-0 mt-36 w-4/5 border-sage-green focus:border"
