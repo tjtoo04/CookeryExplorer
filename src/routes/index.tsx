@@ -3,17 +3,27 @@ import { Form, type DocumentHead } from "@builder.io/qwik-city";
 import type { ButtonVariant } from "flowbite-qwik";
 import { Input } from "flowbite-qwik";
 import { Button } from "flowbite-qwik";
-import { IconSearchOutline } from "flowbite-qwik-icons";
+import {
+  IconSearchOutline,
+  IconChervonDoubleRightSolid,
+} from "flowbite-qwik-icons";
 import { type RecipeDataResponseType } from "~/types/types";
 
-const getRecipe = async (query: string) => {
+const getRecipe = async (query: string, nextLink=false, nextUrl='') => {
   const appID = import.meta.env.EDAMAM_APP_ID;
   const appKey = import.meta.env.EDAMAM_APP_KEY;
-  const recipeData = await fetch(
-    `https://api.edamam.com/api/recipes/v2?type=public&?app_id=${appID}app_key=${appKey}&q=${query}`,
-  );
+  if (!nextLink){
+    const recipeData = await fetch(
+      `https://api.edamam.com/api/recipes/v2?type=public&?app_id=${appID}app_key=${appKey}&q=${query}`,
+    );
+    return recipeData.json();
+  }else {
+    const recipeData = await fetch(
+      nextUrl,
+    );
+    return recipeData.json();
+  }
 
-  return recipeData.json();
 };
 
 export default component$(() => {
@@ -23,6 +33,7 @@ export default component$(() => {
   const isLoading = useSignal(false);
   const showResults = useSignal("opacity-0 -translate-y-6");
   const timeoutId = useSignal<object>();
+  const suggestionRef = useSignal<Element>();
 
   useTask$(({ track }) => {
     const value = track(val);
@@ -36,14 +47,14 @@ export default component$(() => {
 
       if (!typingStatus && value) {
         isLoading.value = true;
-        showResults.value = "opacity-100 translate-y-6"
+        showResults.value = "opacity-100 translate-y-6";
         suggestionVal.value = undefined;
         const data = await getRecipe(val.value);
         if (data) {
           suggestionVal.value = data;
+          console.log(data);
           isLoading.value = false;
         }
-
       }
     };
     update();
@@ -95,13 +106,50 @@ export default component$(() => {
               />
               {/* List of suggestions */}
               <div
-                class={`relative w-4/5 rounded-md bg-white transition-all duration-500 ease-in-out ${showResults.value}`}
+                ref={suggestionRef}
+                class={`relative max-h-56 w-4/5 overflow-auto rounded-md bg-white transition-all duration-500 ease-in-out ${showResults.value}`}
+                onScroll$={() => {
+                  const div = suggestionRef;
+                  if (
+                    div.value!.scrollHeight -
+                      div.value!.clientHeight -
+                      div.value!.scrollTop <
+                    1
+                  ) {
+                    const next = getRecipe('', true, suggestionVal.value?._links.next.href)
+                    next.then(data=> {
+                      if (data) {
+                        suggestionVal.value = data;
+                        div.value?.scrollTo(0, 0);
+                      }
+                    })
+                  }
+                }}
               >
                 <ol>
                   {isLoading.value && <li>Loading....</li>}
                   {suggestionVal.value?.hits &&
                     suggestionVal.value.hits.map((item, index) => {
-                      return <li key={index}>{item.recipe.label}</li>;
+                      return (
+                        <li
+                          class="flex cursor-pointer items-center p-4 hover:bg-slate-200/75"
+                          key={index}
+                        >
+                          <img
+                            width={80}
+                            height={60}
+                            src={item.recipe.images.SMALL.url}
+                            alt={item.recipe.label}
+                            class="mr-4"
+                          />
+                          <span class="ml-4 flex w-full">
+                            {item.recipe.label}
+                          </span>
+                          <span class="mr-2 justify-self-end">
+                            <IconChervonDoubleRightSolid class="w-12" />
+                          </span>
+                        </li>
+                      );
                     })}
                 </ol>
               </div>
