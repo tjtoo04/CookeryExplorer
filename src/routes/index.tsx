@@ -7,28 +7,27 @@ import {
   IconSearchOutline,
   IconChervonDoubleRightSolid,
 } from "flowbite-qwik-icons";
+import type { RecipeDataHitsType } from "~/types/types";
 import { type RecipeDataResponseType } from "~/types/types";
 
-const getRecipe = async (query: string, nextLink=false, nextUrl='') => {
+const getRecipe = async (query: string, nextLink = false, nextUrl = "") => {
   const appID = import.meta.env.EDAMAM_APP_ID;
   const appKey = import.meta.env.EDAMAM_APP_KEY;
-  if (!nextLink){
+  if (!nextLink && query) {
     const recipeData = await fetch(
       `https://api.edamam.com/api/recipes/v2?type=public&?app_id=${appID}app_key=${appKey}&q=${query}`,
     );
     return recipeData.json();
-  }else {
-    const recipeData = await fetch(
-      nextUrl,
-    );
+  } else {
+    const recipeData = await fetch(nextUrl);
     return recipeData.json();
   }
-
 };
 
 export default component$(() => {
   const val = useSignal("");
   const suggestionVal = useSignal<RecipeDataResponseType>();
+  const suggestionArr = useSignal<RecipeDataHitsType[]>([]);
   const isTyping = useSignal(false);
   const isLoading = useSignal(false);
   const showResults = useSignal("opacity-0 -translate-y-6");
@@ -36,9 +35,10 @@ export default component$(() => {
   const suggestionRef = useSignal<Element>();
 
   useTask$(({ track }) => {
-    const value = track(val);
+    let value = track(val);
     const typingStatus = track(isTyping);
     const update = async () => {
+      value = value.trim();
       if (value == "") {
         suggestionVal.value = undefined;
         showResults.value = "opacity-0 -translate-y-6";
@@ -49,9 +49,10 @@ export default component$(() => {
         isLoading.value = true;
         showResults.value = "opacity-100 translate-y-6";
         suggestionVal.value = undefined;
-        const data = await getRecipe(val.value);
+        const data = await getRecipe(val.value.trim());
         if (data) {
           suggestionVal.value = data;
+          suggestionArr.value.push(...suggestionVal.value!.hits);
           console.log(data);
           isLoading.value = false;
         }
@@ -69,7 +70,7 @@ export default component$(() => {
           </h1>
           <Form
             onSubmit$={() => {
-              const data = getRecipe(val.value);
+              const data = getRecipe(val.value.trim());
               data.then((res) => {
                 val.value = res;
                 console.log(res);
@@ -116,20 +117,42 @@ export default component$(() => {
                       div.value!.scrollTop <
                     1
                   ) {
-                    const next = getRecipe('', true, suggestionVal.value?._links.next.href)
-                    next.then(data=> {
-                      if (data) {
-                        suggestionVal.value = data;
-                        div.value?.scrollTo(0, 0);
-                      }
-                    })
+                    if (!document.getElementById("loading-bar")) {
+                      const loadingBarEl = document.createElement("li");
+                      loadingBarEl.setAttribute(
+                        "class",
+                        "flex items-center justify-center p-4 text-slate-500",
+                      );
+                      loadingBarEl.setAttribute("id", "loading-bar");
+                      loadingBarEl.innerHTML = "Loading more...";
+                      div.value!.append(loadingBarEl);
+                    }
+
+                    if (suggestionVal.value?._links.next) {
+                      const next = getRecipe(
+                        "",
+                        true,
+                        suggestionVal.value._links.next.href,
+                      );
+                      next.then((data) => {
+                        if (data) {
+                          document.getElementById("loading-bar")?.remove();
+                          suggestionVal.value = data;
+                          suggestionArr.value.push(
+                            ...suggestionVal.value!.hits,
+                          );
+                        }
+                      });
+                    } else {
+                      document.getElementById("loading-bar")?.remove();
+                    }
                   }
                 }}
               >
                 <ol>
                   {isLoading.value && <li>Loading....</li>}
                   {suggestionVal.value?.hits &&
-                    suggestionVal.value.hits.map((item, index) => {
+                    suggestionArr.value.map((item, index) => {
                       return (
                         <li
                           class="flex cursor-pointer items-center p-4 hover:bg-slate-200/75"
