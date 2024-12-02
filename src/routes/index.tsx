@@ -1,5 +1,5 @@
 import { component$, useSignal, useTask$ } from "@builder.io/qwik";
-import { Form, type DocumentHead } from "@builder.io/qwik-city";
+import { Form, useNavigate, type DocumentHead } from "@builder.io/qwik-city";
 import type { ButtonVariant } from "flowbite-qwik";
 import { Input } from "flowbite-qwik";
 import { Button } from "flowbite-qwik";
@@ -11,8 +11,9 @@ import type { RecipeDataHitsType } from "~/types/types";
 import { type RecipeDataResponseType } from "~/types/types";
 
 const getRecipe = async (query: string, nextLink = false, nextUrl = "") => {
-  const appID = import.meta.env.EDAMAM_APP_ID;
-  const appKey = import.meta.env.EDAMAM_APP_KEY;
+  const appID = import.meta.env.VITE_EDAMAM_APP_ID;
+  console.log(appID);
+  const appKey = import.meta.env.VITE_EDAMAM_APP_KEY;
   if (!nextLink && query) {
     const recipeData = await fetch(
       `https://api.edamam.com/api/recipes/v2?type=public&?app_id=${appID}app_key=${appKey}&q=${query}`,
@@ -25,6 +26,7 @@ const getRecipe = async (query: string, nextLink = false, nextUrl = "") => {
 };
 
 export default component$(() => {
+  const nav = useNavigate();
   const val = useSignal("");
   const suggestionVal = useSignal<RecipeDataResponseType>();
   const suggestionArr = useSignal<RecipeDataHitsType[]>([]);
@@ -33,6 +35,7 @@ export default component$(() => {
   const showResults = useSignal("opacity-0 -translate-y-6");
   const timeoutId = useSignal<object>();
   const suggestionRef = useSignal<Element>();
+  const recipeId = useSignal<string>();
 
   useTask$(({ track }) => {
     let value = track(val);
@@ -45,7 +48,7 @@ export default component$(() => {
         return;
       }
 
-      if (!typingStatus && value) {
+      if (!typingStatus && value !== "") {
         isLoading.value = true;
         showResults.value = "opacity-100 translate-y-6";
         suggestionVal.value = undefined;
@@ -56,6 +59,9 @@ export default component$(() => {
           console.log(data);
           isLoading.value = false;
         }
+      } else {
+        suggestionVal.value = undefined;
+        suggestionArr.value = [];
       }
     };
     update();
@@ -82,7 +88,7 @@ export default component$(() => {
               <Input
                 name="query"
                 bind:value={val}
-                onKeyPress$={() => {
+                onKeyUp$={() => {
                   clearTimeout(timeoutId.value as NodeJS.Timeout);
                   isTyping.value = true;
                   timeoutId.value = setTimeout(() => {
@@ -157,6 +163,13 @@ export default component$(() => {
                         <li
                           class="flex cursor-pointer items-center p-4 hover:bg-slate-200/75"
                           key={index}
+                          onClick$={() => {
+                            const urlSections =
+                              item._links.self.href.split("/");
+                            recipeId.value =
+                              urlSections[urlSections.length - 1];
+                            nav(`/recipe/${recipeId.value}`);
+                          }}
                         >
                           <img
                             width={80}
