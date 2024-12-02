@@ -141,7 +141,7 @@ export default component$(() => {
                   label="Password"
                   value={
                     user.value?.password
-                      ? "*************"
+                      ? ""
                       : "Add a password now!"
                   }
                 />
