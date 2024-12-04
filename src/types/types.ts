@@ -121,3 +121,44 @@ export interface RecipeDataHitsType {
   };
   _links: _ResponseLinks;
 }
+
+export interface RecipeInformation {
+  cuisine_type: string[];
+  meal_type: string[];
+  dish_type: string[];
+}
+
+export type AdditionalProp = {
+  label: string;
+  quantity: number;
+  unit: string;
+};
+export interface NutritionalInformation {
+  diet_labels: string[];
+  health_labels: string[];
+  cautions: string[];
+  calories: number;
+  total_nutrients: {
+    additionalProp1: AdditionalProp;
+    additionalProp2: AdditionalProp;
+    additionalProp3: AdditionalProp;
+  };
+  total_daily: {
+    additionalProp1: AdditionalProp;
+    additionalProp2: AdditionalProp;
+    additionalProp3: AdditionalProp;
+  };
+}
+
+export type RecipeIngredient = {
+  text: string;
+  quantity: number;
+  measure: string;
+  food: string;
+  weight: number;
+  foodId: string;
+};
+export interface RecipeIngredients {
+  ingredients: RecipeIngredient[];
+  ingredient_lines: string[];
+}
