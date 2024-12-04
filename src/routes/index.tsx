@@ -12,7 +12,6 @@ import { type RecipeDataResponseType } from "~/types/types";
 
 const getRecipe = async (query: string, nextLink = false, nextUrl = "") => {
   const appID = import.meta.env.VITE_EDAMAM_APP_ID;
-  console.log(appID);
   const appKey = import.meta.env.VITE_EDAMAM_APP_KEY;
   if (!nextLink && query) {
     const recipeData = await fetch(
@@ -88,7 +87,7 @@ export default component$(() => {
               <Input
                 name="query"
                 bind:value={val}
-                onKeyUp$={() => {
+                onKeyPress$={() => {
                   clearTimeout(timeoutId.value as NodeJS.Timeout);
                   isTyping.value = true;
                   timeoutId.value = setTimeout(() => {

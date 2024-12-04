@@ -21,7 +21,7 @@ errorOnDuplicatesPkgDeps(devDependencies, dependencies);
  * Note that Vite normally starts from `index.html` but the qwikCity plugin makes start at `src/entry.ssr.tsx` instead.
  */
 export default defineConfig(({ command, mode }): UserConfig => {
-  process.env = {...process.env, ...loadEnv(mode, process.cwd())};
+  const env = loadEnv(mode, process.cwd(), '')
   return {
     plugins: [qwikCity(), qwikVite(), tsconfigPaths()],
     // This tells Vite which dependencies to pre-build in dev mode.
@@ -30,6 +30,9 @@ export default defineConfig(({ command, mode }): UserConfig => {
       // For example ['better-sqlite3'] if you use that in server functions.
       exclude: [],
       include: [ "@auth/core" ]
+    },
+    define: {
+      __APP_ENV__: JSON.stringify(env.APP_ENV),
     },
 
     /**

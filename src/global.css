@@ -66,6 +66,10 @@
     width: 100%;
     left: 0;
   }
+  .bubble.active::after {
+    width: 100%;
+    left: 0;
+  }
 
   h1 {
     font-family: "Exo 2", sans-serif;
