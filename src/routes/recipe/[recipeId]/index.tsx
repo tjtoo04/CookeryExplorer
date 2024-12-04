@@ -17,7 +17,7 @@ export const useGetRecipe = routeLoader$(async ({ params, status }) => {
   return recipeDetails;
 });
 
-const tabs = ["Nutritional Information", "B", "C", "D"];
+const tabs = ["Nutritional Information", "Ingredients", "C", "D"];
 
 export default component$(() => {
   const recipeInformation = useGetRecipe();
@@ -31,14 +31,14 @@ export default component$(() => {
           </div>
           {/* Content Container */}
           <div class="flex h-[90%] w-full">
-            <div class="flex h-full w-1/2 items-center justify-center border-r-[1px] p-4">
+            <div class="flex h-full w-2/5 items-center justify-center border-r-[1px] p-4">
               <img
                 class="h-full w-3/4 object-contain"
                 src={recipeInformation.value.recipe.images.REGULAR.url}
                 alt="image"
               />
             </div>
-            <div class="h-full w-1/2">
+            <div class="h-full w-3/5">
               <div class="flex items-center justify-evenly bg-sage-green text-primary-font p-1">
                 {tabs.map((tab, index) => {
                   return (
